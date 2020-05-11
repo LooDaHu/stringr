@@ -1,22 +1,25 @@
-name: R-benchmark # The name of this workflow
+name: R-benchmark
 
 # The condition of toggling this workflow. For this workflow, it will be toggled when push or pull request happens at master branch.
-on:  
+on:
   push:
-    branches: [ master ] 
+    branches: [ master ]
+    paths-ignore: # the ignored path for toggling.
+      - '.github/workflows/**' # Changes in workflow files will not toggle this action
+      - 'Rperform_Data/**' # Changes in result data will not toggle this action
   pull_request:
     branches: [ master ]
+    paths-ignore: 
+      - '.github/workflows/**'
+      - 'Rperform_Data/**'
 
 jobs:
   benchmark:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2 # Checkout@v2 is a Github official workflow that can checkout your repo on VM.
-      with:
-        fetch-depth: 0 # will fetch all commits in history in the repo.
     - name: r-benchmark
       uses: LooDaHu/R-benchmark@v1
       with:
         username: LooDaHu # Replace it with your Github username.
-        commit: 5 # Replace it with the number of existing commits from the head you want to timing.
-# A timing result dataset will be produced once this workflow is committed.
+# A timing result of current pushed commit will be added into the result dataset once changes happen at non-ignored directories. 
